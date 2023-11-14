@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:gradient_colored_slider/gradient_colored_slider.dart';
 import 'package:led_bulb_indicator/led_bulb_indicator.dart';
 import 'package:logica_difusa/services/socket_service.dart';
@@ -16,7 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   String data = "";
-  double _temperatureValue = 0.2;
+  double _temperatureValue = 0.1;
   double _fabValue = 1;
   double _heaterValue = 1;
   late AnimationController _controller;
@@ -29,7 +27,7 @@ class _HomePageState extends State<HomePage>
     final socketService = Provider.of<SocketService>(context, listen: false);
     socketService.socket.on('outputs-fuzzed', handleGetOutputs);
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 50000),
       vsync: this,
     )..repeat(reverse: false);
     super.initState();
@@ -50,14 +48,15 @@ class _HomePageState extends State<HomePage>
 
     var ventiladorAsset = 'assets/images/ventilador_2.png';
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 46, 45, 45),
       appBar: AppBar(
         elevation: 1,
         centerTitle: true,
         title: const Text(
           'Lógica Difusa',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue.shade900,
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 10),
@@ -82,15 +81,16 @@ class _HomePageState extends State<HomePage>
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
+                const Padding(
+                  padding: EdgeInsets.all(15.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Center(
                           child: Text(
-                        'TEMPERATURA DEL AGUA',
-                        style: TextStyle(fontWeight: FontWeight.w800),
+                        'TEMPERATURA DEL CUARTO',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, color: Colors.white),
                       )),
                     ],
                   ),
@@ -99,22 +99,24 @@ class _HomePageState extends State<HomePage>
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   height: 55,
-                  child: GradientColoredSlider(
-                    value: _temperatureValue,
-                    barWidth: 5,
-                    barSpace: 0.5,
-                    gradientColors: _colors,
-                    onChanged: (double value) {
-                      setState(() {
-                        _temperatureValue = value;
-                      });
-                    },
+                  child: AbsorbPointer(
+                    child: GradientColoredSlider(
+                      value: _temperatureValue,
+                      barWidth: 5,
+                      barSpace: 0.5,
+                      gradientColors: _colors,
+                      onChanged: (double value) {
+                        setState(() {
+                          _temperatureValue = value;
+                        });
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 15),
                 Text(
                     '${_rangedSelectedValue(_SLIDER_MAX_STEP, _temperatureValue)} °C',
-                    style: const TextStyle(fontSize: 32)),
+                    style: const TextStyle(fontSize: 32, color: Colors.white)),
                 const SizedBox(height: 32),
                 const Divider(
                   height: 20,
@@ -122,7 +124,11 @@ class _HomePageState extends State<HomePage>
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 15),
-                  child: Center(child: Text('VENTILADOR')),
+                  child: Center(
+                      child: Text(
+                    'VENTILADOR',
+                    style: TextStyle(color: Colors.white),
+                  )),
                 ),
                 RotationTransition(
                   turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
@@ -138,7 +144,11 @@ class _HomePageState extends State<HomePage>
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 20),
-                  child: Center(child: Text('CALENTADOR')),
+                  child: Center(
+                      child: Text(
+                    'CALENTADOR',
+                    style: TextStyle(color: Colors.white),
+                  )),
                 ),
                 LedBulbIndicator(
                   margin: 30,

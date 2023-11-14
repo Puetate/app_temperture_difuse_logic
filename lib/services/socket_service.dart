@@ -10,13 +10,15 @@ class SocketService with ChangeNotifier {
   ServerStatus get serverStatus => _serverStatus;
   IO.Socket get socket => _socket;
   Function get emit => _socket.emit;
+  String IP_SERVER = '10.79.2.131';
+  
 
   SocketService() {
     _initConfig();
   }
   void _initConfig() {
     // Dart client
-    _socket = IO.io('http://192.168.100.231:3000/', {
+    _socket = IO.io('http://$IP_SERVER:3000/', {
       'transports': ['websocket'],
       'autoConnect': true,
     });
